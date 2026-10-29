@@ -1,77 +1,70 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- 1. ПОИСК НАЦИОНАЛЬНЫХ ДУХОВ ---
     const searchInput = document.getElementById('spiritSearch');
     const spiritList = document.getElementById('spiritList');
     const spiritCount = document.getElementById('spiritCount');
     const spiritEmpty = document.getElementById('spiritEmpty');
 
-    if (!searchInput || !spiritList) return;
+    // Запускаем поиск только если мы на странице мира (где есть эти элементы)
+    if (searchInput && spiritList) {
+        const spirits = Array.from(spiritList.querySelectorAll('.spirit'));
 
-   
-    const spirits = Array.from(spiritList.querySelectorAll('.spirit'));
+        const filterSpirits = (query) => {
+            let visibleCount = 0;
 
-    /**
-      @param {string} 
-     */
-    const filterSpirits = (query) => {
-        let visibleCount = 0;
+            spirits.forEach(spirit => {
+                const name = spirit.querySelector('h3')?.textContent.toLowerCase() || '';
+                const country = spirit.querySelector('.country')?.textContent.toLowerCase() || '';
 
-        spirits.forEach(spirit => {
-        
-            const name = spirit.querySelector('h3')?.textContent.toLowerCase() || '';
-            const country = spirit.querySelector('.country')?.textContent.toLowerCase() || '';
+                if (name.includes(query) || country.includes(query)) {
+                    spirit.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    spirit.style.display = 'none';
+                }
+            });
 
-            if (name.includes(query) || country.includes(query)) {
-                spirit.style.display = 'block';
-                visibleCount++;
-            } else {
-                spirit.style.display = 'none';
-            }
+            if (spiritCount) spiritCount.textContent = `Найдено: ${visibleCount}`;
+            if (spiritEmpty) spiritEmpty.hidden = visibleCount > 0;
+        };
+
+        searchInput.addEventListener('input', (e) => {
+            filterSpirits(e.target.value.toLowerCase().trim());
         });
 
-     
-        if (spiritCount) {
-            spiritCount.textContent = `Найдено: ${visibleCount}`;
-        }
+        filterSpirits(''); // Начальная инициализация
+    }
 
-        if (spiritEmpty) {
-            spiritEmpty.hidden = visibleCount > 0;
-        }
-    };
+    // --- 2. КОПИРОВАНИЕ IP (Работает на любой странице) ---
+    document.addEventListener('click', (e) => {
+        // Проверяем, нажали ли мы на кнопку с атрибутом data-copy-ip
+        if (e.target && e.target.hasAttribute('data-copy-ip')) {
+            const btn = e.target;
+            // Ищем текст IP на странице
+            const ipElement = document.querySelector('.server-ip');
 
+            if (!ipElement) {
+                alert('Ошибка: текст IP (.server-ip) не найден на странице');
+                return;
+            }
 
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        filterSpirits(query);
-    });
+            const ipText = ipElement.textContent.trim();
 
-
-    filterSpirits('');
-
-
-    const copyBtn = document.querySelector('[data-copy-ip]');
-    const ipText = document.querySelector('.server-ip');
-
-    if (copyBtn && ipText) {
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(ipText.textContent.trim());
-
-
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = 'Скопировано!';
-                copyBtn.style.background = 'var(--lime)';
+            navigator.clipboard.writeText(ipText).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Скопировано!';
+                btn.style.background = 'var(--lime)';
+                btn.style.color = '#000';
 
                 setTimeout(() => {
-                    copyBtn.textContent = originalText;
-                    copyBtn.style.background = '';
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
                 }, 2000);
-            } catch (err) {
-                console.error('Ошибка при копировании IP:', err);
-                alert('Не удалось скопировать IP');
-            }
-        });
-    }
+            }).catch(err => {
+                alert('Ошибка копирования: ' + err);
+            });
+        }
+    });
 });

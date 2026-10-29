@@ -119,7 +119,7 @@ button {
   text-transform: uppercase;
   color: var(--bg);
   background: var(--cyan);
-  padding: 10px 14px;
+  padding: 10px 10px;
   transition: transform .2s,box-shadow .2s;
   font-weight: 800;
 }
@@ -148,7 +148,7 @@ button {
 .hero-bg img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit:cover;
   animation: slowzoom 24s ease-in-out infinite alternate
 }
 
@@ -792,6 +792,13 @@ button {
   border-color: var(--cyan);
 }
 
+.home-page .server-ip {
+  font: 24px var(--font-mono);
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 5px;
+}
+
 .world-page .server-ip {
   font: 24px var(--font-mono);
   font-weight: 700;
@@ -804,6 +811,18 @@ button {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: .05em;
+}
+
+.copy {
+  background: var(--cyan);
+  color: #071117;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font: 12px var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
 }
 
 .world-page .server-box .copy {
